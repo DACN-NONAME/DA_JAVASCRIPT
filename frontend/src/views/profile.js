@@ -11,20 +11,20 @@ function App() {
               <div className="tyn-profile-cover">
                 <img
                   className="tyn-profile-cover-image"
-                  src="images/cover/2.jpg"
+                  src="images/cover/1.jpg"
                   alt=""
                 />
               </div>
               <div className="tyn-profile-info">
                 <div className="tyn-media-group align-items-start">
                   <div className="tyn-media tyn-media-bordered tyn-size-4xl tyn-profile-avatar">
-                    <img src="images/avatar/1.jpg" alt="" />
+                    <img id="user-avatar" src="" alt="user avatar" />
                   </div>
                   <div className="tyn-media-col">
                     <div className="tyn-media-row">
                       <h4 className="name">
-                        nguyễn tiếng việts&nbsp;
-                        <span className="username">@asd</span>
+                        <span id="fullname"></span>
+                        <span className="username"></span>
                       </h4>
                     </div>
                   </div>
@@ -64,17 +64,16 @@ function App() {
                               <div className="form-group">
                                 <label
                                   className="form-label"
-                                  htmlFor="firstName"
+                                  htmlFor="full_name"
                                 >
-                                  First Name
+                                  Họ tên
                                 </label>
                                 <div className="form-control-wrap">
                                   <input
                                     type="text"
                                     className="form-control"
-                                    id="firstName"
-                                    placeholder="Your Name"
-                                    defaultValue="Nina"
+                                    id="full_name"
+                                    placeholder="Họ tên"
                                   />
                                 </div>
                               </div>
@@ -83,37 +82,35 @@ function App() {
                               <div className="form-group">
                                 <label
                                   className="form-label"
-                                  htmlFor="lastName"
+                                  htmlFor="username"
                                 >
-                                  Last Name
+                                  Tên đăng nhập
                                 </label>
                                 <div className="form-control-wrap">
                                   <input
                                     type="text"
                                     className="form-control"
-                                    id="lastName"
-                                    placeholder="Your Name"
-                                    defaultValue="Dubois"
+                                    id="username"
+                                    placeholder="Username"
+                                    disabled
                                   />
                                 </div>
                               </div>
                             </div>
-                            <div className="col-12">
+                            <div className="col-lg-6">
                               <div className="form-group">
                                 <label
                                   className="form-label d-flex"
-                                  htmlFor="primaryEmail"
+                                  htmlFor="email"
                                 >
-                                  Email chính
+                                  Email
                                 </label>
                                 <div className="form-control-wrap">
                                   <input
                                     type="text"
                                     className="form-control"
-                                    id="primaryEmail"
+                                    id="email"
                                     disabled
-                                    placeholder="Primary Email"
-                                    defaultValue="nina_dubois@themeyn.com"
                                   />
                                 </div>
                               </div>
@@ -122,71 +119,28 @@ function App() {
                               <div className="form-group">
                                 <label
                                   className="form-label"
-                                  htmlFor="phoneNumber"
+                                  htmlFor="created_at"
                                 >
-                                  Phone Number
+                                  Ngày tham gia
                                 </label>
                                 <div className="form-control-wrap">
                                   <input
                                     type="text"
                                     className="form-control"
-                                    id="phoneNumber"
-                                    placeholder="Your Number"
-                                    defaultValue="0098 4654 554"
+                                    id="created_at"
+                                    disabled
                                   />
                                 </div>
                               </div>
                             </div>
                             <div className="col-lg-6">
                               <div className="form-group">
-                                <label
-                                  className="form-label"
-                                  htmlFor="phoneNumber"
+                                <button
+                                  className="btn btn-primary"
+                                  type="submit"
                                 >
-                                  Country
-                                </label>
-                                <div className="form-control-wrap">
-                                  <select className="form-select">
-                                    <option value="Afghanistan">
-                                      Afghanistan
-                                    </option>
-                                    <option value="Åland Islands">
-                                      Åland Islands
-                                    </option>
-                                    <option value="Albania">Albania</option>
-                                    <option value="Algeria">Algeria</option>
-                                    <option value="American Samoa">
-                                      American Samoa
-                                    </option>
-                                    <option value="Andorra">Andorra</option>
-                                    <option value="Angola">Angola</option>
-                                    <option value="Anguilla">Anguilla</option>
-                                    <option value="Antarctica">
-                                      Antarctica
-                                    </option>
-                                    <option value="Antigua and Barbuda">
-                                      Antigua and Barbuda
-                                    </option>
-                                    <option value="Argentina">Argentina</option>
-                                    <option defaultChecked value="Armenia">
-                                      Armenia
-                                    </option>
-                                    <option value="Aruba">Aruba</option>
-                                    <option value="Australia">Australia</option>
-                                    <option value="Austria">Austria</option>
-                                    <option value="Azerbaijan">
-                                      Azerbaijan
-                                    </option>
-                                    <option value="Bahamas">Bahamas</option>
-                                    <option value="Bahrain">Bahrain</option>
-                                    <option value="Bangladesh">
-                                      Bangladesh
-                                    </option>
-                                    <option value="Barbados">Barbados</option>
-                                    <option value="Belarus">Belarus</option>
-                                    <option value="Belgium">Belgium</option>
-                                  </select>
-                                </div>
+                                  Cập nhật thông tin
+                                </button>
                               </div>
                             </div>
                           </div>

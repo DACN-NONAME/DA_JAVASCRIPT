@@ -1,4 +1,4 @@
-class ReturnApi {
+class ReturnData {
   constructor() {
     this.success = false;
     // this.defaultMessage = "Có lỗi xảy ra, vui lòng thử lại sau!";
@@ -29,4 +29,4 @@ class ReturnApi {
   }
 }
 
-module.exports = ReturnApi;
+module.exports = ReturnData;

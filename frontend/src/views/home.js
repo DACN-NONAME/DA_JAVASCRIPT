@@ -222,19 +222,57 @@ function App() {
         </div>
         <div className="tyn-chat-body" id="tynChatBody">
           <div className="tyn-reply" id="tynReply">
+            {/* <div className="tyn-reply-item incoming">
+              <div className="tyn-reply-avatar">
+                <div className="tyn-media tyn-size-md tyn-circle">
+                  <img src="images/avatar/2.jpg" alt="" />
+                </div>
+              </div>
+              <div className="tyn-reply-group">
+                <div className="tyn-reply-bubble">
+                  <div className="tyn-reply-link">
+                    <a
+                      className="tyn-reply-anchor"
+                      href="https://www.envato.com/atomic-power-plant-engine/"
+                    >
+                      https://www.envato.com/atomic-power-plant-engine/
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="tyn-reply-item incoming">
+              <div className="tyn-reply-avatar">
+                <div className="tyn-media tyn-size-md tyn-circle">
+                  <img src="images/avatar/2.jpg" alt="" />
+                </div>
+              </div>
+              <div className="tyn-reply-group">
+                <div className="tyn-reply-bubble">
+                  <div className="tyn-reply-text">
+                    {" "}
+                    I hope these article helps.{" "}
+                  </div>
+                </div>
+              </div>
+            </div>
             <div className="tyn-reply-item outgoing">
               <div className="tyn-reply-group">
                 <div className="tyn-reply-bubble">
                   <div className="tyn-reply-text">nguyễn phát đã nhắn tin.</div>
                 </div>
+              </div>
+            </div>
+            <div className="tyn-reply-item outgoing">
+              <div className="tyn-reply-group">
                 <div className="tyn-reply-bubble">
                   <div className="tyn-reply-text">
                     nguyễn phát đã nhắn tin 2.
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="tyn-reply-item incoming">
+            </div> */}
+            {/* <div className="tyn-reply-item incoming">
               <div className="tyn-reply-avatar">
                 <div className="tyn-media tyn-size-md tyn-circle">
                   <img src="images/avatar/2.jpg" alt="" />
@@ -258,7 +296,7 @@ function App() {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
             <div className="tyn-reply-separator">bla bla.</div>
           </div>
         </div>

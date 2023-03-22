@@ -2,7 +2,7 @@
 const express = require("express");
 const router = express.Router();
 
-// router.use("/abc", require("./abc.route"));
+router.use("/user", require("./user.route"));
 
 /* GET home page. */
 router.get("/", function (req, res, next) {

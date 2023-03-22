@@ -2,13 +2,137 @@
 <html lang="vi" data-bs-theme="">
 
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="shortcut icon" href="images/favicon.ico">
-  <title>Messages | ConnectMe | Chat Application HTML Template</title>
-  <link rel="stylesheet" href="./assets/css/bundle.css">
-  <link rel="stylesheet" href="./assets/css/app.css">
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="shortcut icon" href="images/favicon.ico" />
+  <title>Noname - Tâm sự với người lạ</title>
+  <link rel="stylesheet" href="./assets/css/bundle.css" />
+  <link rel="stylesheet" href="./assets/css/app.css" />
+  <style>
+    .qtip {
+      display: inline-block;
+      position: relative;
+      /* cursor: pointer; */
+      color: #3bb4e5;
+      /* border-bottom: 0.05em dotted #3bb4e5; */
+      box-sizing: border-box;
+      font-style: normal;
+      transition: all .25s ease-in-out
+    }
+
+    .qtip:hover {
+      color: #069;
+      border-bottom: 0.05em dotted #069
+    }
+
+    /*the tip*/
+    .qtip:before {
+      content: attr(data-tip);
+      font-size: 14px;
+      position: absolute;
+      background: rgba(10, 20, 30, 0.85);
+      color: #fff;
+      line-height: 1.2em;
+      padding: 0.5em;
+      font-style: normal;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+      min-width: 120px;
+      text-align: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all .3s ease-in-out;
+      text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+      font-family: sans-serif;
+      letter-spacing: 0;
+      font-weight: 600
+    }
+
+    .qtip:after {
+      width: 0;
+      height: 0;
+      border-style: solid;
+      content: '';
+      position: absolute;
+      opacity: 0;
+      visibility: hidden;
+      transition: all .3s ease-in-out
+    }
+
+    .qtip:hover:before,
+    .qtip:hover:after {
+      visibility: visible;
+      opacity: 1
+    }
+
+    /*top*/
+    .qtip.tip-top:before {
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, calc(-100% - 8px));
+      box-sizing: border-box;
+      border-radius: 3px;
+    }
+
+    .qtip.tip-top:after {
+      border-width: 8px 8px 0 8px;
+      border-color: rgba(10, 20, 30, 0.85) transparent transparent transparent;
+      top: -8px;
+      left: 50%;
+      transform: translate(-50%, 0);
+    }
+
+    /*bottom*/
+    .qtip.tip-bottom:before {
+      bottom: 0;
+      left: 50%;
+      transform: translate(-50%, calc(100% + 8px));
+      box-sizing: border-box;
+      border-radius: 3px;
+    }
+
+    .qtip.tip-bottom:after {
+      border-width: 0 8px 8px 8px;
+      border-color: transparent transparent rgba(10, 20, 30, 0.85) transparent;
+      bottom: -8px;
+      left: 50%;
+      transform: translate(-50%, 0);
+    }
+
+    /*left*/
+    .qtip.tip-left:before {
+      left: 0;
+      top: 50%;
+      transform: translate(calc(-100% - 8px), -50%);
+      box-sizing: border-box;
+      border-radius: 3px;
+    }
+
+    .qtip.tip-left:after {
+      border-width: 8px 0 8px 8px;
+      border-color: transparent transparent transparent rgba(10, 20, 30, 0.85);
+      left: -8px;
+      top: 50%;
+      transform: translate(0, -50%);
+    }
+
+    /*right*/
+    .qtip.tip-right:before {
+      right: 0;
+      top: 50%;
+      transform: translate(calc(100% + 8px), -50%);
+      box-sizing: border-box;
+      border-radius: 3px;
+    }
+
+    .qtip.tip-right:after {
+      border-width: 8px 8px 8px 0;
+      border-color: transparent rgba(10, 20, 30, 0.85) transparent transparent;
+      right: -8px;
+      top: 50%;
+      transform: translate(0, -50%);
+    }
+  </style>
 </head>
 
 <body class="tyn-body">
@@ -16,7 +140,27 @@
   <script src="./assets/js/bundle.js"></script>
   <script src="./assets/js/app.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <script src="./assets/js/socket.io.min.js"></script>
+  <script src="assets/js/notify.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" crossorigin="anonymous"
+    integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/vi.min.js" crossorigin="anonymous"
+    integrity="sha512-LvYVj/X6QpABcaqJBqgfOkSjuXv81bLz+rpz0BQoEbamtLkUF2xhPNwtI/xrokAuaNEQAMMA1/YhbeykYzNKWg=="></script>
+  <script src="./assets/js/run.js"></script>
   <span id="paging"></span>
+  <script>
+    function check_server() {
+      socket.emit('check-session', getCookie('token'), (success) => {
+        if (success == false) {
+          localStorage.clear();
+          deleteAllCookies();
+          if (!window.location.pathname.includes('login'))
+            window.location.replace("/login.html");
+        } else { if (window.location.pathname.includes('login')) window.location.replace("/home"); else check_server(); }
+      });
+    }
+    check_server();
+  </script>
 </body>
 
 </html>
