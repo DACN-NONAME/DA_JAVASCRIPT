@@ -137,6 +137,7 @@ function App() {
                               <div className="form-group">
                                 <button
                                   className="btn btn-primary"
+                                  id="update-profile"
                                   type="submit"
                                 >
                                   Cập nhật thông tin
@@ -147,7 +148,7 @@ function App() {
                         </div>
                       </div>
                     </div>
-                    <div className="col-12">
+                    {/* <div className="col-12">
                       <div className="row gy-4">
                         <div className="col-lg-3">
                           <h6>Sign-in Method</h6>
@@ -229,7 +230,7 @@ function App() {
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>

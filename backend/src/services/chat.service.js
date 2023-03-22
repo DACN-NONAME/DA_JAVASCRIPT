@@ -34,10 +34,14 @@ class Chat {
       }
     });
 
-    socket.on("load-chat", async (token, room_id, callback) => {
+    socket.on("load-chat", async (token, room_id, cursor, callback) => {
       if (fn.checkSession(token)) {
+        let filter = { room_id };
+        if (cursor) filter.created_at = { $lt: cursor };
         let data = await dbMessages
-          .find({ room_id })
+          .find(filter)
+          .sort({ created_at: "desc" })
+          .limit(10)
           .populate("user", "full_name username");
         // console.log(data);
         callback(data);
@@ -49,7 +53,7 @@ class Chat {
         let room = await dbRooms.findOne({ _id: room_id });
         if (room) {
           let parse = fn.verifyToken(token);
-          message = message.trim().toHtmlEntities();
+          message = message.trim().replace(/<br>/g, "\n").toHtmlEntities();
           let created_at = moment().unix();
           new dbMessages({
             room_id,
@@ -57,10 +61,15 @@ class Chat {
             message,
             created_at,
           }).save();
+          let user = await userController.getUser(parse.username);
           global._io.emit(
             "receive-chat",
             room_id,
-            String(parse._id),
+            {
+              user_id: String(parse._id),
+              full_name: user.full_name,
+              username: user.username,
+            },
             message,
             created_at
           );

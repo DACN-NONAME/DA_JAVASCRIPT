@@ -51,12 +51,12 @@ function App() {
                     </div>
                     <div className="tyn-media-col">
                       <div className="tyn-media-row">
-                        <h6 className="name">hehe 1</h6>
-                        <span className="typing">typing ...</span>
+                        <h6 className="name">Kênh chung</h6>
+                        <span className="typing">idle.</span>
                       </div>
                       <div className="tyn-media-row has-dot-sap">
-                        <p className="content">nguyễn asd.</p>
-                        <span className="meta">45 min</span>
+                        <p className="content">typing...</p>
+                        <span className="meta">now</span>
                       </div>
                     </div>
                   </div>
@@ -113,10 +113,7 @@ function App() {
             </div>
             <div className="tyn-media-col">
               <div className="tyn-media-row">
-                <h6 className="name">
-                  Jasmine{" "}
-                  <span className="d-none d-sm-inline-block">Thompson</span>
-                </h6>
+                <h6 className="name">Kênh chung</h6>
               </div>
               <div className="tyn-media-row has-dot-sap">
                 <span className="meta">Active</span>
@@ -297,9 +294,10 @@ function App() {
                 </div>
               </div>
             </div> */}
-            <div className="tyn-reply-separator">bla bla.</div>
+            {/* <div className="tyn-reply-separator">bla bla.</div> */}
           </div>
         </div>
+        <div id="cursor" style={{ display: "none" }}></div>
         <div className="tyn-chat-form">
           <div className="tyn-chat-form-insert"></div>
           <div className="tyn-chat-form-enter">

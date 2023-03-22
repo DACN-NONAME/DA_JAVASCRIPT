@@ -53,6 +53,9 @@ function deleteAllCookies() {
     document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
   }
 }
+function wait(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
 
 const WEB_HOST = `http://localhost:3000`;
 setCookie("web_host", WEB_HOST, 365);
