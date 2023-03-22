@@ -4,7 +4,11 @@ const router = express.Router();
 const fn = require("../../conf/function");
 const userController = require("../controllers/user.controller");
 
-router.route("/check-session").get(userController.checkSession);
+router
+  .route("/check-session")
+  .all(fn.verifyAuthen)
+  .get(userController.checkSession)
+  .post(userController.checkSession);
 
 router.route("/login").post(userController.login);
 router.route("/register").post(userController.register);

@@ -58,6 +58,7 @@ fn.verifyAuthen = async (req, res, next) => {
     if (fn.checkSession(token)) {
       let parse = fn.verifyToken(token);
       req.username = parse.username;
+      req.token = token;
       next();
       return;
     }

@@ -1,4 +1,4 @@
-socket.emit("get-profile", getCookie("token"), (a) => {
+socket.emit("get-profile", (a) => {
   console.log(a);
   $("#user-avatar").attr("src", WEB_HOST + "/user/avatar/" + a._id);
   $("#fullname").text(a.full_name + " ");

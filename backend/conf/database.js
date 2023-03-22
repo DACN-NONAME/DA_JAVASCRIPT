@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 require("../src/models/user.model");
 require("../src/models/room.model");
+require("../src/models/waiting.model");
 require("../src/models/message.model");
 
 mongoose.Promise = global.Promise;

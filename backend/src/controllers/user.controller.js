@@ -59,9 +59,11 @@ async function register(req, res) {
   if (
     !user.username ||
     /^[0-9]+?$/.test(user.username) ||
-    !/^[a-zA-Z0-9._]+?$/.test(user.username)
+    !/^[a-zA-Z0-9._]+?$/.test(user.username) ||
+    user.username.length <= 5
   ) {
-    returnData.message = "Vui lòng nhập tên người dùng hợp lệ!";
+    returnData.message =
+      "Vui lòng nhập tên người dùng hợp lệ và tối thiểu 5 ký tự!";
     res.send(returnData.toObject());
     return;
   }

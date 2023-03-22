@@ -147,13 +147,25 @@
     integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/vi.min.js" crossorigin="anonymous"
     integrity="sha512-LvYVj/X6QpABcaqJBqgfOkSjuXv81bLz+rpz0BQoEbamtLkUF2xhPNwtI/xrokAuaNEQAMMA1/YhbeykYzNKWg=="></script>
+  <script src="./assets/js/md5.min.js"></script>
   <script src="./assets/js/run.js"></script>
   <span id="paging"></span>
   <script>
+    $.ajax({
+      url: WEB_HOST + "/user/check-session",
+      type: "post",
+      headers: {
+        Authorization: "Bearer " + getCookie("token"),
+      },
+      success: function (data) {
+        if (data.success == false) { deleteAllCookies(); window.location.replace("/login.html"); }
+      },
+    });
+
     function check_server() {
-      socket.emit('check-session', getCookie('token'), (success) => {
+      socket.emit('check-session', (success) => {
         if (success == false) {
-          localStorage.clear();
+          // localStorage.clear();
           deleteAllCookies();
           if (!window.location.pathname.includes('login'))
             window.location.replace("/login.html");

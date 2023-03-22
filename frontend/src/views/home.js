@@ -9,7 +9,32 @@ function App() {
           <div className="tyn-aside-head-text">
             <h3 className="tyn-aside-title">Chats</h3>
           </div>
-          <div className="tyn-aside-head-tools"></div>
+          <div className="tyn-aside-head-tools">
+            <button
+              className="btn btn-sm btn-info"
+              id="search-stranger"
+              onClick={searchStranger}
+              style={{ display: "none" }}
+            >
+              Tìm kiếm người lạ
+            </button>
+            <button
+              className="btn btn-sm btn-warning"
+              id="searching-stranger"
+              onClick={searchingStranger}
+              style={{ display: "none" }}
+            >
+              Đang tìm kiếm người lạ
+            </button>
+            <button
+              className="btn btn-sm btn-danger"
+              id="leave-stranger"
+              onClick={leaveStranger}
+              style={{ display: "none" }}
+            >
+              Kết thúc trò chuyện người lạ
+            </button>
+          </div>
         </div>
         <div className="tyn-aside-body" data-simplebar>
           <div className="tyn-aside-search">
@@ -44,7 +69,7 @@ function App() {
               role="tabpanel"
             >
               <ul className="tyn-aside-list">
-                <li className="tyn-aside-item js-toggle-main active">
+                {/* <li className="tyn-aside-item js-toggle-main active">
                   <div className="tyn-media-group">
                     <div className="tyn-media tyn-size-lg">
                       <img src="images/avatar/1.jpg" alt="" />
@@ -77,7 +102,7 @@ function App() {
                       </div>
                     </div>
                   </div>
-                </li>
+                </li> */}
               </ul>
             </div>
           </div>
@@ -113,7 +138,7 @@ function App() {
             </div>
             <div className="tyn-media-col">
               <div className="tyn-media-row">
-                <h6 className="name">Kênh chung</h6>
+                <h6 className="name" id="room_name"></h6>
               </div>
               <div className="tyn-media-row has-dot-sap">
                 <span className="meta">Active</span>

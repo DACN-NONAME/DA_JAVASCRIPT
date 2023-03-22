@@ -2,13 +2,10 @@ TynApp.Chat.reply.scroll();
 TynApp.Chat.reply.input();
 TynApp.Chat.item();
 
-var isScrollBottom = false;
-var isScrollTop = false;
-
 var editableDiv = document.querySelector('div[contenteditable="true"]');
 editableDiv.addEventListener("paste", function (e) {
   e.preventDefault();
-  var text = e.clipboardData.getData("text/plain");
+  let text = e.clipboardData.getData("text/plain");
   // console.log({ text });
   // console.log({ text: text.replace(/\r\n/g, "<br>") });
   // document.execCommand("insertHTML", false, text);
@@ -39,7 +36,7 @@ async function scrollHandler(event) {
     } else if (scrollTop === 0) {
       isScrollTop = true;
       isScrollBottom = false;
-      loadChat("64188ace02d75042e876384f", $("#cursor").text(), false);
+      loadChat(room_id, $("#cursor").text(), false);
       break;
     } else {
       isScrollTop = false;
@@ -55,12 +52,7 @@ $("#tynChatInput").on("keydown", function search(e) {
     if (text != "") {
       if (!e.shiftKey) {
         e.preventDefault();
-        socket.emit(
-          "send-chat",
-          getCookie("token"),
-          "64188ace02d75042e876384f",
-          text
-        );
+        if (room_id) socket.emit("send-chat", room_id, text);
         // Xoá text
         $(this).html("");
       }
@@ -68,72 +60,36 @@ $("#tynChatInput").on("keydown", function search(e) {
   }
 });
 
-function loadChat(room_id, cursor = $("#cursor").text(), isScroll = true) {
-  socket.emit("load-chat", getCookie("token"), room_id, cursor, (data) => {
-    // console.log(data);
-    for (let i in data) {
-      let a = data[i];
-      $("#cursor").text(a.created_at);
-      let message = `<div class="tyn-reply-text">${a.message.replace(
-        /\n/g,
-        "<br/>"
-      )}</div>`;
-      let created_at = moment.unix(a.created_at).format("DD-MM-YYYY HH:mm:ss");
-      if (a.user_id == getCookie("user_id"))
-        $("#tynReply").append(
-          `<div class="tyn-reply-item outgoing">
-          <div class="tyn-reply-group"><div class="tyn-reply-bubble qtip tip-left" data-tip="${created_at}">${message}</div></div></div>`
-        );
-      else
-        $("#tynReply").append(
-          `<div class="tyn-reply-item incoming">
-            <div class="tyn-reply-avatar"><div class="tyn-media tyn-size-md tyn-circle qtip tip-right"
-              data-tip="${a.user.full_name + "\n@" + a.user.username}">
-              <img src="${
-                WEB_HOST + "/user/avatar/" + a.user_id
-              }" alt="user avatar" />
+socket.emit("list-chat", (data) => {
+  console.log(data);
+  let hasPrivate = false;
+  for (i in data) {
+    let a = data[i];
+    if (a.privacy == "PRIVATE") hasPrivate = true;
+    $(".tyn-aside-list")
+      .append(`<li class="tyn-aside-item js-toggle-main" onclick="openChat('${a._id}')">
+        <div class="tyn-media-group">
+          <div class="tyn-media tyn-size-lg">
+            <img src="images/avatar/1.jpg" alt="" />
+          </div>
+          <div class="tyn-media-col">
+            <div class="tyn-media-row">
+              <h6 class="name">${a.name}</h6>
+              <span class="typing">${a.privacy}</span>
+            </div>
+            <div class="tyn-media-row has-dot-sap">
+              <p class="content">bla bla.</p>
+              <span class="meta">now</span>
             </div>
           </div>
-          <div class="tyn-reply-group"><div class="tyn-reply-bubble qtip tip-right" data-tip="${created_at}">${message}</div></div></div>`
-        );
-    }
-    if (isScroll) scrollBot();
-  });
-}
-loadChat("64188ace02d75042e876384f");
-
-socket.on(
-  "receive-chat",
-  (room_id, { user_id, full_name, username }, message, created_at) => {
-    console.log(room_id, user_id, message);
-    message = message.replace(/\n/g, "<br/>");
-    created_at = moment.unix(created_at).format("DD-MM-YYYY HH:mm:ss");
-    if (user_id == getCookie("user_id")) {
-      $("#tynReply").prepend(`<div class="tyn-reply-item outgoing">
-      <div class="tyn-reply-group">
-        <div class="tyn-reply-bubble qtip tip-left" data-tip="${created_at}">
-          <div class="tyn-reply-text">${message}</div>
         </div>
-      </div>
-    </div>`);
-      scrollBot();
-    } else {
-      $("#tynReply").prepend(`<div class="tyn-reply-item incoming">
-      <div class="tyn-reply-avatar">
-        <div class="tyn-media tyn-size-md tyn-circle qtip tip-right"
-          data-tip="${full_name + "\n@" + username}">
-          <img src="${
-            WEB_HOST + "/user/avatar/" + user_id
-          }" alt="user avatar" />
-        </div>
-      </div>
-      <div class="tyn-reply-group">
-        <div class="tyn-reply-bubble qtip tip-right" data-tip="${created_at}">
-          <div class="tyn-reply-text">${message}</div>
-        </div>
-      </div>
-    </div>`);
-      if (isScrollBottom) scrollBot();
-    }
+      </li>`);
   }
-);
+  if (hasPrivate) $("#leave-stranger").show();
+  else {
+    socket.emit("searching-stranger", (data) => {
+      if (data) $("#searching-stranger").show();
+      else $("#search-stranger").show();
+    });
+  }
+});

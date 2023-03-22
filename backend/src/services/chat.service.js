@@ -1,11 +1,17 @@
+const mongoose = require("mongoose");
 var moment = require("moment-timezone");
 moment().tz("Asia/Ho_Chi_Minh").format();
 
 const dbRooms = require("../models/room.model");
+const dbRoomParticipants = require("../models/room_participant.model");
+const dbWaiting = require("../models/waiting.model");
 const dbMessages = require("../models/message.model");
 const userController = require("../controllers/user.controller");
 
 const fn = require("../../conf/function");
+
+const mapUsers = new Map();
+const mapPrivateRooms = new Map();
 
 String.prototype.toHtmlEntities = function () {
   return this.replace(/./gm, function (s) {
@@ -15,65 +21,199 @@ String.prototype.toHtmlEntities = function () {
 };
 
 class Chat {
+  // prepare socket
+  async ready(socket, next) {
+    let room = await dbRoomParticipants.findOne({ user_id: socket.user_id });
+    if (room) {
+      mapPrivateRooms.set(socket.id, String(room.room_id));
+      socket.join(String(room.room_id));
+    }
+    next();
+  }
+
   //connection socket
   connection(socket) {
+    socket.on("connect", () => {
+      // mapUsers.set(parse.username, socket.id);
+      console.log(`User connect id is: ${socket.id}`);
+    });
+
     socket.on("disconnect", () => {
-      console.log(`User disconnect id is ${socket.id}`);
+      // mapUsers.delete(parse.username);
+      console.log(`User disconnect id is: ${socket.id}`);
     });
 
-    socket.on("check-session", (token, callback) => {
-      callback(fn.checkSession(token));
+    socket.on("check-session", (callback) => {
+      callback(fn.checkSession(socket.token));
     });
 
-    socket.on("get-profile", async (token, callback) => {
-      if (fn.checkSession(token)) {
-        let parse = fn.verifyToken(token);
-        let user = await userController.getUser(parse.username);
-        user.password = undefined;
-        callback(user);
-      }
+    socket.on("get-profile", async (callback) => {
+      let parse = fn.verifyToken(socket.token);
+      let user = await userController.getUser(parse.username);
+      user.password = undefined;
+      callback(user);
     });
 
-    socket.on("load-chat", async (token, room_id, cursor, callback) => {
-      if (fn.checkSession(token)) {
-        let filter = { room_id };
-        if (cursor) filter.created_at = { $lt: cursor };
-        let data = await dbMessages
-          .find(filter)
-          .sort({ created_at: "desc" })
-          .limit(10)
-          .populate("user", "full_name username");
-        // console.log(data);
-        callback(data);
-      }
+    socket.on("get-info-room", async (room_id, password, callback) => {
+      let room = await dbRooms.findOne({ _id: room_id });
+      if (room) callback(room);
+      else callback(false);
     });
 
-    socket.on("send-chat", async (token, room_id, message) => {
-      if (fn.checkSession(token)) {
-        let room = await dbRooms.findOne({ _id: room_id });
-        if (room) {
-          let parse = fn.verifyToken(token);
-          message = message.trim().replace(/<br>/g, "\n").toHtmlEntities();
-          let created_at = moment().unix();
-          new dbMessages({
-            room_id,
-            user_id: parse._id,
-            message,
-            created_at,
+    socket.on("search-stranger", async (callback) => {
+      let exist = await dbRoomParticipants.findOne({ user_id: socket.user_id });
+      if (exist == null) {
+        let stranger = await dbWaiting.findOne({});
+        if (stranger) {
+          let session = await mongoose.startSession();
+          session.startTransaction();
+          try {
+            let opts = { session, returnOriginal: false };
+            // Tạo phòng riêng
+            let room = await new dbRooms({
+              name: "Ẩn danh",
+              privacy: "PRIVATE",
+              password: "",
+              created_at: moment().unix(),
+            }).save(opts);
+            // Tạo 2 người tham gia
+            await new dbRoomParticipants({
+              room_id: room._id,
+              user_id: stranger.user_id,
+            }).save(opts);
+            await new dbRoomParticipants({
+              room_id: room._id,
+              user_id: socket.user_id,
+            }).save(opts);
+            // Xoá người lạ khỏi hàng chờ
+            await dbWaiting.deleteOne({ user_id: stranger.user_id }, opts);
+            await session.commitTransaction();
+            // Thêm vào socket room
+            mapPrivateRooms.set(socket.id, String(room._id));
+            socket.join(String(room._id));
+            callback({ status: "matching" });
+          } catch (err) {
+            await session.abortTransaction();
+            console.log("Error Transaction:", err);
+            callback(false);
+          }
+        } else {
+          await new dbWaiting({
+            user_id: socket.user_id,
+            created_at: moment().unix(),
           }).save();
-          let user = await userController.getUser(parse.username);
+          callback({ status: "searching" });
+        }
+      } else callback(false);
+    });
+
+    socket.on("searching-stranger", async (callback) => {
+      let exist = await dbWaiting.findOne({ user_id: socket.user_id });
+      if (exist) callback(true);
+      else callback(false);
+    });
+
+    socket.on("cancel-searching-stranger", async (callback) => {
+      let exist = await dbWaiting.findOne({ user_id: socket.user_id });
+      if (exist) {
+        await dbWaiting.deleteOne({ user_id: exist.user_id });
+        callback(true);
+      } else callback(false);
+    });
+
+    socket.on("leave-stranger", async (callback) => {
+      let exist = await dbRoomParticipants.findOne({ user_id: socket.user_id });
+      if (exist) {
+        let session = await mongoose.startSession();
+        session.startTransaction();
+        try {
+          let opts = { session, returnOriginal: false };
+          // Xoá phòng riêng, 2 người tham gia
+          await dbRooms.deleteOne({ _id: exist.room_id }, opts);
+          await dbRoomParticipants.deleteMany({ room_id: exist.room_id }, opts);
+          await dbMessages.deleteMany({ room_id: exist.room_id }, opts);
+          await session.commitTransaction();
+          // Xoá khỏi socket room
+          socket.leave(mapPrivateRooms.get(socket.id));
+          mapPrivateRooms.delete(socket.id);
+        } catch (err) {
+          await session.abortTransaction();
+          console.log("Error Transaction:", err);
+        }
+        callback(true);
+      } else callback(false);
+    });
+
+    socket.on("list-chat", async (callback) => {
+      let rooms = await dbRooms.find({ privacy: "PUBLIC" });
+      let room = await dbRooms.findOne({ _id: mapPrivateRooms.get(socket.id) });
+      if (room) rooms = [...rooms, room];
+      callback(rooms);
+    });
+
+    socket.on("load-chat", async (room_id, cursor, callback) => {
+      let room = await dbRooms.findOne({ _id: room_id });
+      let filter = { room_id };
+      if (cursor) filter.created_at = { $lt: cursor };
+      let data = await dbMessages
+        .find(filter)
+        .sort({ created_at: "desc" })
+        .limit(10)
+        .populate("user", "full_name username");
+      let data2 = [];
+      if (room.privacy == "PRIVATE") {
+        // data = data.toObject();
+        for (let i in data) {
+          let obj = data[i].toObject();
+          obj.user_id = fn.hashMD5(String(obj.user_id));
+          obj.user._id = undefined;
+          obj.user.full_name = "Ẩn danh";
+          obj.user.username = "null";
+          data2 = [...data2, obj];
+        }
+      } else data2 = [...data];
+      callback(data2);
+    });
+
+    socket.on("send-chat", async (room_id, message) => {
+      let room = await dbRooms.findOne({ _id: room_id });
+      if (room) {
+        let parse = fn.verifyToken(socket.token);
+        message = message.trim().replace(/<br>/g, "\n").toHtmlEntities();
+        let user_id = parse._id;
+        let created_at = moment().unix();
+        new dbMessages({
+          room_id,
+          user_id,
+          message,
+          created_at,
+        }).save();
+        let user = await userController.getUser(parse.username);
+        console.log(socket.id, mapPrivateRooms.get(socket.id));
+        if (room.privacy == "PUBLIC")
           global._io.emit(
             "receive-chat",
             room_id,
             {
-              user_id: String(parse._id),
+              user_id,
               full_name: user.full_name,
               username: user.username,
             },
             message,
             created_at
           );
-        }
+        else if (room.privacy == "PRIVATE")
+          global._io.to(mapPrivateRooms.get(socket.id)).emit(
+            "receive-chat",
+            room_id,
+            {
+              user_id: "0",
+              full_name: "Ẩn danh",
+              username: "null",
+            },
+            message,
+            created_at
+          );
       }
     });
   }

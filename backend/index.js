@@ -9,10 +9,12 @@ var app = require("express")();
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 
+const fn = require("./conf/function");
 const swaggerUi = require("swagger-ui-express");
 const swaggerJSDoc = require("swagger-jsdoc");
 const connectDB = require("./conf/database");
 connectDB();
+
 let index = require("./src/routes/index");
 
 const serverHost = "localhost";
@@ -32,6 +34,21 @@ global._io = io;
 
 const chatService = require("./src/services/chat.service");
 
+global._io.use((socket, next) => {
+  let token = socket.handshake.auth.token;
+  if (!token) {
+    return next(new Error("Invalid token."));
+  } else {
+    if (fn.checkSession(token)) {
+      let parse = fn.verifyToken(token);
+      socket.user_id = parse._id;
+      // socket.user_name = parse.user_name;
+      socket.token = token;
+    } else return next(new Error("Invalid token."));
+  }
+  next();
+});
+global._io.use(chatService.ready);
 global._io.on("connection", chatService.connection);
 
 server.listen(serverPort, () => {
