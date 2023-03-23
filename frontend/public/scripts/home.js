@@ -2,6 +2,8 @@ TynApp.Chat.reply.scroll();
 TynApp.Chat.reply.input();
 TynApp.Chat.item();
 
+room_id = null;
+
 var editableDiv = document.querySelector('div[contenteditable="true"]');
 editableDiv.addEventListener("paste", function (e) {
   e.preventDefault();
@@ -60,36 +62,4 @@ $("#tynChatInput").on("keydown", function search(e) {
   }
 });
 
-socket.emit("list-chat", (data) => {
-  console.log(data);
-  let hasPrivate = false;
-  for (i in data) {
-    let a = data[i];
-    if (a.privacy == "PRIVATE") hasPrivate = true;
-    $(".tyn-aside-list")
-      .append(`<li class="tyn-aside-item js-toggle-main" onclick="openChat('${a._id}')">
-        <div class="tyn-media-group">
-          <div class="tyn-media tyn-size-lg">
-            <img src="images/avatar/1.jpg" alt="" />
-          </div>
-          <div class="tyn-media-col">
-            <div class="tyn-media-row">
-              <h6 class="name">${a.name}</h6>
-              <span class="typing">${a.privacy}</span>
-            </div>
-            <div class="tyn-media-row has-dot-sap">
-              <p class="content">bla bla.</p>
-              <span class="meta">now</span>
-            </div>
-          </div>
-        </div>
-      </li>`);
-  }
-  if (hasPrivate) $("#leave-stranger").show();
-  else {
-    socket.emit("searching-stranger", (data) => {
-      if (data) $("#searching-stranger").show();
-      else $("#search-stranger").show();
-    });
-  }
-});
+listChat();

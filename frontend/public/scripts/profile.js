@@ -23,3 +23,25 @@ $("#update-profile").on("click", function () {
     },
   });
 });
+$("#update-password").on("click", function () {
+  $.ajax({
+    url: WEB_HOST + "/user/password",
+    type: "post",
+    data: {
+      password: $("#password").val(),
+      new_password: $("#new-password").val(),
+      new_password_again: $("#new-password-again").val(),
+    },
+    headers: {
+      Authorization: "Bearer " + getCookie("token"),
+    },
+    success: function (data) {
+      if (data.success) {
+        $("#password").val("");
+        $("#new-password").val("");
+        $("#new-password-again").val("");
+        $.notify("Cập nhật mật khẩu thành công!", "success");
+      } else $.notify(data.message, "error");
+    },
+  });
+});

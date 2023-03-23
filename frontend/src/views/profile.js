@@ -148,89 +148,80 @@ function App() {
                         </div>
                       </div>
                     </div>
-                    {/* <div className="col-12">
+                    <div className="col-12">
                       <div className="row gy-4">
                         <div className="col-lg-3">
-                          <h6>Sign-in Method</h6>
-                          <div className="tyn-subtext">
-                            Edit Your personal Info
-                          </div>
+                          <h6>Bảo mật</h6>
+                          <div className="tyn-subtext">Đổi mật khẩu</div>
                         </div>
                         <div className="col-lg-9">
                           <div className="row g-gs">
-                            <div className="col-12">
-                              <div className="border rounded-2 p-3 position-relative">
-                                <div className="d-flex flex-wrap flex-sm-nowrap justify-content-between align-items-center w-100 pe-5">
-                                  <div className="tyn-media-group mw-100">
-                                    <div className="tyn-media text-bg-danger">
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="16"
-                                        height="16"
-                                        fill="currentColor"
-                                        className="bi bi-google"
-                                        viewBox="0 0 16 16"
-                                      >
-                                        <path d="M15.545 6.558a9.42 9.42 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.689 7.689 0 0 1 5.352 2.082l-2.284 2.284A4.347 4.347 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.792 4.792 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.702 3.702 0 0 0 1.599-2.431H8v-3.08h7.545z" />
-                                      </svg>
-                                    </div>
-                                    <div className="tyn-media-col">
-                                      <h6 className="name">Google Account</h6>
-                                      <span className="content">
-                                        Your google account is connected.
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <div className="position-absolute end-0 me-3">
-                                    <div className="form-check form-check-reverse form-switch">
-                                      <input
-                                        className="form-check-input"
-                                        defaultChecked
-                                        type="checkbox"
-                                        role="switch"
-                                        id="googleAccount"
-                                      />
-                                    </div>
-                                  </div>
+                            <div className="col-lg-4">
+                              <div className="form-group">
+                                <label
+                                  className="form-label"
+                                  htmlFor="password"
+                                >
+                                  Mật khẩu cũ
+                                </label>
+                                <div className="form-control-wrap">
+                                  <input
+                                    type="password"
+                                    className="form-control"
+                                    id="password"
+                                  />
                                 </div>
                               </div>
                             </div>
-                            <div className="col-12">
-                              <div className="border rounded-2 p-3">
-                                <div className="d-flex flex-wrap flex-sm-nowrap justify-content-between align-items-center">
-                                  <div className="tyn-media-group w-100">
-                                    <div className="tyn-media text-bg-primary">
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="16"
-                                        height="16"
-                                        fill="currentColor"
-                                        className="bi bi-facebook"
-                                        viewBox="0 0 16 16"
-                                      >
-                                        <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z" />
-                                      </svg>
-                                    </div>
-                                    <div className="tyn-media-col">
-                                      <h6 className="name">Facebook Account</h6>
-                                      <span className="content">
-                                        You can connect with your facebook
-                                        account.
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <div className="ms-5 mt-3 mt-sm-0 ms-sm-0">
-                                    <button className="btn btn-sm btn-primary ms-2">
-                                      Connect
-                                    </button>
-                                  </div>
+                            <div className="col-lg-4">
+                              <div className="form-group">
+                                <label
+                                  className="form-label"
+                                  htmlFor="new-password"
+                                >
+                                  Mật khẩu mới
+                                </label>
+                                <div className="form-control-wrap">
+                                  <input
+                                    type="password"
+                                    className="form-control"
+                                    id="new-password"
+                                  />
                                 </div>
+                              </div>
+                            </div>
+                            <div className="col-lg-4">
+                              <div className="form-group">
+                                <label
+                                  className="form-label"
+                                  htmlFor="new-password-again"
+                                >
+                                  Nhập lại mật khẩu mới
+                                </label>
+                                <div className="form-control-wrap">
+                                  <input
+                                    type="password"
+                                    className="form-control"
+                                    id="new-password-again"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                            <div className="col-lg-6">
+                              <div className="form-group">
+                                <button
+                                  className="btn btn-primary"
+                                  id="update-password"
+                                  type="submit"
+                                >
+                                  Cập nhật mật khẩu
+                                </button>
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div> */}
+                    </div>
                   </div>
                 </div>
               </div>

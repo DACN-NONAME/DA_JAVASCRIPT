@@ -20,6 +20,12 @@ router
   .post(userController.updateMe)
   .put(userController.updateMe);
 
+router
+  .route("/password")
+  .all(fn.verifyAuthen)
+  .post(userController.updatePassword)
+  .put(userController.updatePassword);
+
 router.route("/avatar/:user_id").get(userController.getAvatar);
 
 module.exports = router;

@@ -159,7 +159,9 @@
       },
       success: function (data) {
         if (data.success == false) { deleteAllCookies(); window.location.replace("/login.html"); }
-      },
+      }, error: function () {
+        deleteAllCookies(); window.location.replace("/login.html");
+      }
     });
 
     function check_server() {

@@ -92,6 +92,15 @@ class Chat {
             mapPrivateRooms.set(socket.id, String(room._id));
             socket.join(String(room._id));
             callback({ status: "matching" });
+            // Thêm người lạ và socket room
+            for (let [id, sk] of global._io.of("/").sockets) {
+              if (sk.user_id == stranger.user_id) {
+                sk.join(String(room._id));
+                sk.emit("matching-stranger");
+                mapPrivateRooms.set(sk.id, String(room._id));
+                break;
+              }
+            }
           } catch (err) {
             await session.abortTransaction();
             console.log("Error Transaction:", err);
@@ -133,14 +142,25 @@ class Chat {
           await dbRoomParticipants.deleteMany({ room_id: exist.room_id }, opts);
           await dbMessages.deleteMany({ room_id: exist.room_id }, opts);
           await session.commitTransaction();
-          // Xoá khỏi socket room
-          socket.leave(mapPrivateRooms.get(socket.id));
+          // Xoá người hiện tại khỏi socket room
+          let room_id = mapPrivateRooms.get(socket.id);
+          socket.leave(room_id);
           mapPrivateRooms.delete(socket.id);
+          // Xoá người lạ khỏi socket room
+          for (let [id, sk] of global._io.of("/").sockets) {
+            if (mapPrivateRooms.get(id) == room_id) {
+              sk.leave(room_id);
+              sk.emit("leave-stranger");
+              mapPrivateRooms.delete(id);
+              break;
+            }
+          }
+          callback(true);
         } catch (err) {
           await session.abortTransaction();
           console.log("Error Transaction:", err);
+          callback(false);
         }
-        callback(true);
       } else callback(false);
     });
 
@@ -207,7 +227,7 @@ class Chat {
             "receive-chat",
             room_id,
             {
-              user_id: "0",
+              user_id: fn.hashMD5(user_id),
               full_name: "Ẩn danh",
               username: "null",
             },

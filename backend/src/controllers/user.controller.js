@@ -161,6 +161,33 @@ async function getAvatar(req, res) {
   }
 }
 
+async function updatePassword(req, res) {
+  let returnData = new ReturnData();
+  let user = await getUser(req.username);
+  if (user) {
+    let { password, new_password, new_password_again } = req.body;
+    if (!password) returnData.message = "Vui lòng nhập mật khẩu cũ!";
+    else if (!new_password) returnData.message = "Vui lòng nhập mật khẩu mới!";
+    else if (!new_password_again)
+      returnData.message = "Vui lòng nhập mật khẩu mới lần nữa!";
+    else if (new_password != new_password_again)
+      returnData.message = "Mật khẩu mới và nhập lại không trùng khớp!";
+    else {
+      if (fn.bcryptVerify(password, user.password)) {
+        let result = await dbUsers.updateOne(
+          { username: req.username },
+          { password: fn.bcryptHash(new_password) }
+        );
+        if (result) {
+          returnData.success = true;
+          returnData.message = "Cập nhật mật khẩu thành công!";
+        } else returnData.message = "Không thể cập nhật mật khẩu!";
+      } else returnData.message = "Mật khẩu cũ không chính xác!";
+    }
+  } else returnData.message = "Người dùng không tìm thấy!";
+  res.send(returnData.toObject());
+}
+
 module.exports = {
   checkSession,
   getUser,
@@ -169,4 +196,5 @@ module.exports = {
   getMe,
   updateMe,
   getAvatar,
+  updatePassword,
 };
