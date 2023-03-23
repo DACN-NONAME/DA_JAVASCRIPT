@@ -57,7 +57,8 @@ function wait(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-const WEB_HOST = `http://localhost:3000`;
+// const WEB_HOST = `http://localhost:3000`;
+const WEB_HOST = `https://chat-api.phatnef.me`;
 setCookie("web_host", WEB_HOST, 365);
 const socket = io(WEB_HOST, { transport: ["websocket"], autoConnect: false });
 if (getCookie("token")) {

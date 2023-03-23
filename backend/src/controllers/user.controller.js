@@ -63,7 +63,7 @@ async function register(req, res) {
     user.username.length <= 5
   ) {
     returnData.message =
-      "Vui lòng nhập tên người dùng hợp lệ và tối thiểu 5 ký tự!";
+      "Vui lòng nhập tên người dùng hợp lệ và tối thiểu 6 ký tự!";
     res.send(returnData.toObject());
     return;
   }
