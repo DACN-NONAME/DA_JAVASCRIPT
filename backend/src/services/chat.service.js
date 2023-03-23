@@ -178,7 +178,7 @@ class Chat {
       let data = await dbMessages
         .find(filter)
         .sort({ created_at: "desc" })
-        .limit(10)
+        .limit(20)
         .populate("user", "full_name username");
       let data2 = [];
       if (room.privacy == "PRIVATE") {
@@ -199,7 +199,7 @@ class Chat {
       let room = await dbRooms.findOne({ _id: room_id });
       if (room) {
         let parse = fn.verifyToken(socket.token);
-        message = message.trim().replace(/<br>/g, "\n").toHtmlEntities();
+        message = fn.escapeHtml(message.trim().replace(/<br>/g, "\n"));
         let user_id = parse._id;
         let created_at = moment().unix();
         new dbMessages({

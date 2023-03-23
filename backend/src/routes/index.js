@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 router.use("/user", require("./user.route"));
+router.use("/webhook", require("./webhook.route"));
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
