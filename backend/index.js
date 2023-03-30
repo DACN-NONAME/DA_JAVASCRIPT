@@ -25,6 +25,11 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors());
 app.use("/", index);
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(require("./openapi.json"))
+);
 
 var server = require("http").createServer(app);
 var io = require("socket.io")(server, {

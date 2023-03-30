@@ -12,7 +12,7 @@ const userController = require("./user.controller");
 const ReturnData = require("../models/returnData.model");
 const fn = require("../../conf/function");
 
-async function webhook(req, res) {
+async function webhookTelegram(req, res) {
   let returnData = new ReturnData();
   //   console.log(req.body);
   try {
@@ -64,6 +64,42 @@ async function webhook(req, res) {
           await axios.get(api + encodeURIComponent(text));
           break;
 
+        case "/rooms":
+          text = "Danh sách phòng PUBLIC hiện có (ID, tên):";
+          let rooms = await dbRooms.find({ privacy: "PUBLIC" });
+          for (let i in rooms) {
+            let a = rooms[i];
+            text += "\n" + a._id + ": " + a.name;
+          }
+          await axios.get(api + encodeURIComponent(text));
+          break;
+
+        case "/room-add":
+          text =
+            "Lệnh dùng để tạo một room public!\nUsage: /room-add <tên room>";
+          let room_name = message.text.replace("/room-add ", "");
+          if (room_name) {
+            await new dbRooms({
+              name: room_name,
+              privacy: "PUBLIC",
+              password: "",
+              created_at: moment().unix(),
+            }).save();
+            text = "Đã tạo phòng!";
+          }
+          await axios.get(api + encodeURIComponent(text));
+          break;
+
+        case "/room-del":
+          text =
+            "Lệnh dùng để xoá một room public!\nUsage: /room-del <id_room>";
+          if (cmd[1]) {
+            await dbRooms.deleteOne({ _id: cmd[1] });
+            text = "Đã xoá phòng!";
+          }
+          await axios.get(api + encodeURIComponent(text));
+          break;
+
         case "/ads":
           text = "Vui lòng nhập nội dung cần quảng bá!";
           if (cmd[1]) {
@@ -108,4 +144,4 @@ async function webhook(req, res) {
   res.send(returnData.toObject());
 }
 
-module.exports = { webhook };
+module.exports = { webhookTelegram };

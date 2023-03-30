@@ -4,6 +4,6 @@ const router = express.Router();
 const fn = require("../../conf/function");
 const webhookController = require("../controllers/webhook.controller");
 
-router.route("/").post(webhookController.webhook);
+router.route("/telegram").post(webhookController.webhookTelegram);
 
 module.exports = router;
